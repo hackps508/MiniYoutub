@@ -1,82 +1,350 @@
 <!DOCTYPE html>
 <html lang="sq">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mini YouTube</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Mini YouTube</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
-      margin: 0;
-      padding: 0;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+        }
 
-    header {
-      background-color: #ff0000;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
+        .header {
+            background-color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
-      gap: 20px;
-    }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
 
-    .video-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      width: 300px;
-      overflow: hidden;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-    .video-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-    }
+        .search-bar {
+            width: 350px;
+            padding: 10px 16px;
+            border: 1px solid #ccc;
+            border-radius: 24px;
+            font-size: 14px;
+        }
 
-    .video-card video {
-      width: 100%;
-      height: auto;
-      border-bottom: 1px solid #ccc;
-    }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 56px;
+            width: 250px;
+            background-color: #fff;
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            border-right: 1px solid #e0e0e0;
+        }
 
-    .video-card h3 {
-      margin: 10px;
-      font-size: 18px;
-    }
+        .sidebar-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #030303;
+            font-size: 14px;
+        }
 
-    .video-card p {
-      margin: 0 10px 10px 10px;
-      font-size: 14px;
-      color: #555;
-    }
-  </style>
+        .sidebar-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar-section-title {
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #606060;
+            text-transform: uppercase;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            margin-top: 56px;
+        }
+
+        .category-tabs {
+            background-color: #fff;
+            padding: 12px 24px;
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .category-tab:hover {
+            background-color: #e0e0e0;
+        }
+
+        .category-tab.active {
+            background-color: #030303;
+            color: #fff;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding: 24px;
+        }
+
+        .video-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .video-card:hover {
+            transform: scale(1.02);
+        }
+
+        .video-player {
+            width: 100%;
+            height: 180px;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 12px 0;
+        }
+
+        .video-title {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 4px;
+            color: #030303;
+        }
+
+        .video-meta {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        .shorts-section {
+            background-color: #fff;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .shorts-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .shorts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .short-card {
+            aspect-ratio: 9/16;
+            background-color: #000;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .short-card:hover {
+            opacity: 0.8;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
 </head>
-
 <body>
-  <header>Mini YouTube</header>
-
-  <div class="container">
-    <!-- Video 1 -->
-    <div class="video-card">
-      <video controls>
-        <source src="kenga.mp4" type="video/mp4">
-        Shfletuesi yt nuk e mbështet videon.
-      </video>
-      <h3>Matolale</h3>
-      <p>Karder dhe Thuthuq</p>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">▶  Mini YouTube</div>
+            <input type="text" class="search-bar" placeholder="Kërko...">
+        </div>
     </div>
-  </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-item">🏠 Home</div>
+        <div class="sidebar-item">📺 Shorts</div>
+        <div class="sidebar-item">🔔 Pacimet</div>
+        <div class="sidebar-item">▶️ Biblioteka</div>
+        
+        <div class="sidebar-section-title">Pacimet</div>
+        <div class="sidebar-item">🎵 Musik</div>
+        <div class="sidebar-item">🎮 Gaming</div>
+        <div class="sidebar-item">😂 Komedni</div>
+        <div class="sidebar-item">🎬 Filmat</div>
+        <div class="sidebar-item">🏃 Sport</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- CATEGORY TABS -->
+        <div class="category-tabs">
+            <button class="category-tab active">Të gjitha</button>
+            <button class="category-tab">Muzika</button>
+            <button class="category-tab">Gaming</button>
+            <button class="category-tab">Playlista</button>
+            <button class="category-tab">Livestream</button>
+            <button class="category-tab">Komedni</button>
+            <button class="category-tab">Filmat</button>
+            <button class="category-tab">Monda</button>
+        </div>
+
+        <!-- VIDEOS GRID -->
+        <div class="videos-grid">
+            <!-- VIDEO 1 -->
+            <div class="video-card">
+                <div class="video-player">
+                    <video controls>
+                        <source src="kenga.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Matolale</div>
+                    <div class="video-meta">Karder dhe thuthuq</div>
+                </div>
+            </div>
+
+            <!-- VIDEO 2 -->
+            <div class="video-card">
+                <div class="video-player">
+                    <video controls>
+                        <source src="kenga1.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Video Titulla 1</div>
+                    <div class="video-meta">Artistja • 5.4K shikime</div>
+                </div>
+            </div>
+
+            <!-- VIDEO 3 -->
+            <div class="video-card">
+                <div class="video-player">
+                    <video controls>
+                        <source src="kenga2.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Video Titulla 2</div>
+                    <div class="video-meta">Artistja • 2.8M shikime</div>
+                </div>
+            </div>
+
+            <!-- VIDEO 4 -->
+            <div class="video-card">
+                <div class="video-player">
+                    <video controls>
+                        <source src="kenga3.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Video Titulla 3</div>
+                    <div class="video-meta">Artistja • 890K shikime</div>
+                </div>
+            </div>
+
+            <!-- VIDEO 5 -->
+            <div class="video-card">
+                <div class="video-player">
+                    <video controls>
+                        <source src="kenga4.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Video Titulla 4</div>
+                    <div class="video-meta">Artistja • 3.1M shikime</div>
+                </div>
+            </div>
+
+            <!-- VIDEO 6 -->
+            <div class="video-card">
+                <div class="video-player">
+                    <video controls>
+                        <source src="kenga5.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div class="video-title">Video Titulla 5</div>
+                    <div class="video-meta">Artistja • 1.5M shikime</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHORTS SECTION -->
+        <div class="shorts-section">
+            <div class="shorts-title">📱 Shorts</div>
+            <div class="shorts-grid">
+                <div class="short-card">Short 1</div>
+                <div class="short-card">Short 2</div>
+                <div class="short-card">Short 3</div>
+                <div class="short-card">Short 4</div>
+                <div class="short-card">Short 5</div>
+                <div class="short-card">Short 6</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
